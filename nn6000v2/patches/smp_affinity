@@ -127,12 +127,7 @@ enable_affinity() {
         set_affinity 'wbm2host-tx-completions-ring2' 2 1
         set_affinity 'wbm2host-tx-completions-ring3' 3 1
 
-        # assign 3 ppdu mac interrupts to last 3 cores (WiFi MAC 中断分散)
-        set_affinity 'ppdu-end-interrupts-mac1' 1 1
-        set_affinity 'ppdu-end-interrupts-mac2' 2 1
-        set_affinity 'ppdu-end-interrupts-mac3' 3 1
-
-        # assign 4 lan/wan to core 3 (以太网集中到 CPU3，避免干扰 WiFi)
+        # assign 4 lan/wan to core 3 (以太网集中到 CPU3)
         set_affinity 'edma_txcmpl' 3 1
         set_affinity 'edma_rxfill' 3 1
         set_affinity 'edma_rxdesc' 3 1

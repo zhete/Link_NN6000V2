@@ -49,12 +49,11 @@ nss_version=${nss_version:-"N/A"}
 # CPU governor
 cpu=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || echo "N/A")
 
-# ATH11K firmware version
-ath11k_fw=$(grep -hm1 -a -o 'WLAN.[^[:cntrl:]]*SILICONZ-1' /lib/firmware/*/q6* 2>/dev/null | head -1)
-ath11k_fw=${ath11k_fw:-"N/A"}
+# ATH11K firmware version (WiFi 已移除)
+ath11k_fw="N/A"
 
-# MAC80211 version
-mac80211_version=$(awk '/version/{print $NF;exit}' /lib/modules/*/compat.ko 2>/dev/null || echo "N/A")
+# MAC80211 version (WiFi 已移除)
+mac80211_version="N/A"
 
 # IPQ release details
 if [ -r /etc/ipq_release ]; then
