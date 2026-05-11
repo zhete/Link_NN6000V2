@@ -128,8 +128,11 @@ apply_passwall_tweaks() {
 }
 
 update_nss_pbuf_performance() {
-    # WiFi 已移除，不再需要 NSS pbuf 性能调优
-    :
+    local pbuf_path="$BUILD_DIR/package/kernel/mac80211/files/pbuf.uci"
+    if [ -d "$(dirname "$pbuf_path")" ] && [ -f $pbuf_path ]; then
+        sed -i "s/auto_scale '1'/auto_scale 'off'/g" $pbuf_path
+        sed -i "s/scaling_governor 'performance'/scaling_governor 'schedutil'/g" $pbuf_path
+    fi
 }
 
 set_build_signature() {
@@ -173,8 +176,15 @@ EOF
 }
 
 update_script_priority() {
-    # WiFi 已移除，不再需要调整 NSS 驱动和 pbuf 启动优先级
-    :
+    local qca_drv_path="$BUILD_DIR/package/feeds/nss_packages/qca-nss-drv/files/qca-nss-drv.init"
+    if [ -d "${qca_drv_path%/*}" ] && [ -f "$qca_drv_path" ]; then
+        sed -i 's/START=.*/START=88/g' "$qca_drv_path"
+    fi
+
+    local pbuf_path="$BUILD_DIR/package/kernel/mac80211/files/qca-nss-pbuf.init"
+    if [ -d "${pbuf_path%/*}" ] && [ -f "$pbuf_path" ]; then
+        sed -i 's/START=.*/START=89/g' "$pbuf_path"
+    fi
 }
 
 fix_rust_compile_error() {
