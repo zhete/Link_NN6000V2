@@ -129,6 +129,7 @@ apply_passwall_tweaks() {
 
 update_nss_pbuf_performance() {
     # WiFi 已移除，不再需要 NSS pbuf 性能调优
+    :
 }
 
 set_build_signature() {
@@ -173,6 +174,7 @@ EOF
 
 update_script_priority() {
     # WiFi 已移除，不再需要调整 NSS 驱动和 pbuf 启动优先级
+    :
 }
 
 fix_rust_compile_error() {
