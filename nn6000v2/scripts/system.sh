@@ -14,6 +14,7 @@ fix_default_set() {
     install -Dm544 "$BASE_PATH/patches/991_custom_settings" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/991_custom_settings"
     install -Dm544 "$BASE_PATH/patches/992_network_config.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_network_config.sh"
     install -Dm544 "$BASE_PATH/patches/994_set_opkg_repos" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/994_set_opkg_repos"
+    install -Dm544 "$BASE_PATH/patches/995_istore_backup.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/995_istore_backup.sh"
 
     if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
         if [ -f "$BASE_PATH/patches/tempinfo" ]; then
@@ -109,6 +110,16 @@ boot() {
     fi
 
     crontab /etc/crontabs/root
+
+    # 恢复 iStore 软件（如果存在备份列表）
+    local istore_list="/etc/istore/installed_packages.txt"
+    if [ -f "$istore_list" ] && [ -x /usr/bin/is-opkg ]; then
+        logger -t custom_task "检测到 iStore 软件备份列表，开始恢复..."
+        while read -r pkg; do
+            [ -n "$pkg" ] && /usr/bin/is-opkg install "$pkg" 2>/dev/null &
+        done < "$istore_list"
+        logger -t custom_task "iStore 软件恢复任务已提交到后台"
+    fi
 }
 EOF
     chmod +x "$sh_dir/custom_task"
@@ -168,9 +179,29 @@ add_backup_info_to_sysupgrade() {
 
     if [ -f "$conf_path" ]; then
         cat >"$conf_path" <<'EOF'
+# 应用配置
 /etc/AdGuardHome.yaml
 /etc/easytier
 /etc/lucky/
+
+# iStore 软件列表和配置
+/etc/istore/
+/usr/lib/opkg/istore/
+/overlay/upper/etc/istore/
+/overlay/upper/usr/lib/opkg/istore/
+
+# Docker 相关（如果使用 Dockerman）
+/etc/docker/
+/mnt/docker/
+
+# 其他常用应用配置
+/etc/ddns-go/
+/etc/alist/
+/etc/samba/
+/etc/smb.conf
+/etc/smartdns/
+/etc/passwall/
+/etc/openclash/
 EOF
     fi
 }
