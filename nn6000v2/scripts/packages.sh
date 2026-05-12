@@ -73,7 +73,8 @@ install_openwrt_packages() {
         smartdns luci-app-smartdns luci-theme-argon luci-app-argon-config \
         luci-lib-docker luci-app-lucky luci-app-adguardhome luci-app-easytier \
         luci-app-oaf oaf open-app-filter \
-        luci-app-diskman luci-app-dockerman luci-app-quickfile luci-app-passwall
+        luci-app-diskman luci-app-dockerman luci-app-quickfile luci-app-passwall \
+        luci-app-ddnsto
 }
 
 clone_passwall() {
@@ -281,6 +282,18 @@ clone_quickfile() {
         "mkdir -p \"$QUICKFILE_DIR\" && mv \"$TEMP_DIR/luci-app-quickfile\" \"$TEMP_DIR/quickfile\" \"$QUICKFILE_DIR/\""
 
     rm -rf "$TEMP_DIR"
+}
+
+clone_ddnsto() {
+    local DDNSTO_DIR="$OPENWRT_PACKAGES_DIR/luci-app-ddnsto"
+    local TEMP_DIR="$OPENWRT_PACKAGES_DIR/ddnsto-temp"
+
+    clone_packages "luci-app-ddnsto" \
+        "${GITHUB_BASE}linkease/ddnsto-openwrt.git" \
+        "$TEMP_DIR" \
+        "" \
+        "" \
+        "rm -rf \"$DDNSTO_DIR\" 2>/dev/null || true; cp -r \"$TEMP_DIR\"/* \"$OPENWRT_PACKAGES_DIR/\" 2>/dev/null || true; rm -rf \"$TEMP_DIR\""
 }
 
 remove_attendedsysupgrade() {

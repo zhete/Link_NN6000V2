@@ -49,6 +49,7 @@ main() {
     clone_easytier
     clone_oaf
     clone_passwall
+    clone_ddnsto
     install_feeds
     update_docker_stack
     remove_tweaked_packages
