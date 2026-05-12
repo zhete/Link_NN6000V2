@@ -3,6 +3,11 @@
 GITHUB_BASE="https://github.com/"
 OPENWRT_PACKAGES_DIR="$BUILD_DIR/feeds/openwrt_packages"
 
+# 加载检测和清理脚本
+SCRIPT_DIR=$(cd $(dirname $0) && pwd)
+BASE_PATH=${BASE_PATH:-$(dirname "$SCRIPT_DIR")}
+CHECK_CLEAN_SCRIPT="$BASE_PATH/scripts/check_and_clean.sh"
+
 update_golang() {
     if [[ -d ./feeds/packages/lang/golang ]]; then
         \rm -rf ./feeds/packages/lang/golang
@@ -11,6 +16,10 @@ update_golang() {
             exit 1
         fi
         echo "✓ golang 软件包更新完成"
+    fi
+    # 检测 golang 是否更新
+    if [ -f "$CHECK_CLEAN_SCRIPT" ]; then
+        (cd "$BUILD_DIR" && bash "$CHECK_CLEAN_SCRIPT" "golang" "./feeds/packages/lang/golang" "git")
     fi
 }
 
@@ -27,7 +36,12 @@ clone_packages() {
     if [ -n "$pre_cmd" ]; then
         (cd "$BUILD_DIR" && eval "$pre_cmd") || return 1
     fi
-    
+
+    # 检测旧版本
+    if [ -d "$target_dir" ] && [ -d "./staging_dir" ] && [ -f "$CHECK_CLEAN_SCRIPT" ]; then
+        (cd "$BUILD_DIR" && bash "$CHECK_CLEAN_SCRIPT" "$name" "$target_dir" "git")
+    fi
+
     rm -rf "$target_dir" 2>/dev/null || true
     
     if [ -n "$sparse_pattern" ]; then
@@ -249,7 +263,12 @@ _sync_luci_lib_docker() {
         echo "错误：从 $repo_url 克隆 luci-lib-docker 仓库失败" >&2
         exit 1
     fi
-    
+
+    # 检测 luci-lib-docker 是否更新
+    if [ -d "$luci_lib_docker_dir" ] && [ -d "./staging_dir" ] && [ -f "$CHECK_CLEAN_SCRIPT" ]; then
+        (cd "$BUILD_DIR" && bash "$CHECK_CLEAN_SCRIPT" "luci-lib-docker" "$luci_lib_docker_dir" "git")
+    fi
+
     echo "✓ luci-lib-docker 克隆完成"
 }
 
