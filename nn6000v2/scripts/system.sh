@@ -15,6 +15,7 @@ fix_default_set() {
     install -Dm544 "$BASE_PATH/patches/992_network_config.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_network_config.sh"
     install -Dm544 "$BASE_PATH/patches/994_set_opkg_repos" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/994_set_opkg_repos"
     install -Dm544 "$BASE_PATH/patches/995_istore_backup.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/995_istore_backup.sh"
+    install -Dm755 "$BASE_PATH/patches/istore-backup.init" "$BUILD_DIR/package/base-files/files/etc/init.d/istore-backup"
 
     if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
         if [ -f "$BASE_PATH/patches/tempinfo" ]; then

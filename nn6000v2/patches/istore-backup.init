@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+# ============================================================
+# iStore 软件备份服务
+# 在系统停止（包括 sysupgrade）时自动备份软件列表
+# ============================================================
+
+START=99
+STOP=10
+
+USE_PROCD=1
+
+start_service() {
+    # 启动时不做特殊操作
+    return 0
+}
+
+stop_service() {
+    # 系统停止时备份 iStore 软件列表
+    local backup_dir="/etc/istore"
+    local backup_file="$backup_dir/installed_packages.txt"
+    
+    mkdir -p "$backup_dir"
+    
+    if [ -x /usr/bin/is-opkg ]; then
+        /usr/bin/is-opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
+        logger -t istore-backup "系统停止前已备份 iStore 软件列表 ($(wc -l < "$backup_file") 个包)"
+    fi
+}

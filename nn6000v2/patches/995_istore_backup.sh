@@ -22,3 +22,9 @@ backup_istore_packages() {
 if [ "$1" = "preupgrade" ]; then
     backup_istore_packages
 fi
+
+# 首次启动时启用 istore-backup 服务
+if [ -x /etc/init.d/istore-backup ]; then
+    /etc/init.d/istore-backup enable
+    logger -t istore_backup "已启用 istore-backup 服务"
+fi
