@@ -180,29 +180,79 @@ add_backup_info_to_sysupgrade() {
 
     if [ -f "$conf_path" ]; then
         cat >"$conf_path" <<'EOF'
-# 应用配置
+# ==================== 预装插件配置 ====================
+# AdGuardHome
 /etc/AdGuardHome.yaml
-/etc/easytier
+
+# Lucky
 /etc/lucky/
 
-# iStore 软件列表和配置
-/etc/istore/
-/usr/lib/opkg/istore/
-/overlay/upper/etc/istore/
-/overlay/upper/usr/lib/opkg/istore/
+# Passwall
+/etc/passwall/
 
-# Docker 相关（如果使用 Dockerman）
-/etc/docker/
-/mnt/docker/
+# PBR (多线路)
+/etc/config/pbr
+/etc/pbr/
 
-# 其他常用应用配置
-/etc/ddns-go/
-/etc/alist/
+# SmartDNS
+/etc/config/smartdns
+/etc/smartdns/
+
+# ZeroTier
+/etc/config/zerotier
+/etc/zerotier/
+
+# EasyTier
+/etc/config/easytier
+/etc/easytier/
+
+# UPnP
+/etc/config/upnpd
+
+# SQM (QoS)
+/etc/config/sqm
+
+# SAMBA4
+/etc/config/samba
 /etc/samba/
 /etc/smb.conf
-/etc/smartdns/
-/etc/passwall/
-/etc/openclash/
+
+# Dockerman / Docker
+/etc/config/dockerd
+/etc/docker/
+
+# Diskman
+/etc/config/diskman
+
+# HD-Idle
+/etc/config/hd-idle
+
+# p910nd (打印机)
+/etc/config/p910nd
+
+# OAF (Open App Filter)
+/etc/oaf/
+
+# Argon 主题
+/etc/config/argon
+
+# ttyd (Web 终端)
+/etc/config/ttyd
+
+# ==================== iStore 相关 ====================
+/etc/istore/
+/usr/lib/opkg/istore/
+
+# ==================== 系统配置 ====================
+/etc/config/
+/etc/crontabs/
+/etc/firewall.user
+/etc/dropbear/
+/etc/network.config
+/etc/resolv.conf
+
+# ==================== 自定义备份 ====================
+/mnt/docker/
 EOF
     fi
 }
