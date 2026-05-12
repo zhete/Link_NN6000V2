@@ -10,11 +10,11 @@ fix_default_set() {
         find "$BUILD_DIR/feeds/luci/collections/" -type f -name "Makefile" -exec sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" {} \;
     fi
 
-    install -Dm544 "$BASE_PATH/patches/990_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/990_set_argon_primary"
-    install -Dm544 "$BASE_PATH/patches/991_custom_settings" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/991_custom_settings"
-    install -Dm544 "$BASE_PATH/patches/992_network_config.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_network_config.sh"
-    install -Dm544 "$BASE_PATH/patches/994_set_opkg_repos" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/994_set_opkg_repos"
-    install -Dm544 "$BASE_PATH/patches/995_istore_backup.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/995_istore_backup.sh"
+    install -Dm755 "$BASE_PATH/patches/990_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/990_set_argon_primary"
+    install -Dm755 "$BASE_PATH/patches/991_custom_settings" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/991_custom_settings"
+    install -Dm755 "$BASE_PATH/patches/992_network_config.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_network_config.sh"
+    install -Dm755 "$BASE_PATH/patches/994_set_opkg_repos" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/994_set_opkg_repos"
+    install -Dm755 "$BASE_PATH/patches/995_istore_backup.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/995_istore_backup.sh"
     install -Dm755 "$BASE_PATH/patches/istore-backup.init" "$BUILD_DIR/package/base-files/files/etc/init.d/istore-backup"
 
     if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
@@ -251,7 +251,7 @@ add_backup_info_to_sysupgrade() {
 /etc/crontabs/
 /etc/firewall.user
 /etc/dropbear/
-/etc/network.config
+/etc/config/network
 /etc/resolv.conf
 
 # ==================== 自定义备份 ====================
@@ -521,7 +521,7 @@ fix_quickstart() {
         echo "正在修复 quickstart..."
         if ! curl -fsSL -o "$file_path" "$url"; then
             echo "错误：从 $url 下载 istore_backend.lua 失败" >&2
-            exit 1
+            return 1
         fi
     fi
 }
