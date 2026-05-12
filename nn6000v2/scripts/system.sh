@@ -239,6 +239,9 @@ add_backup_info_to_sysupgrade() {
 # ttyd (Web 终端)
 /etc/config/ttyd
 
+# DDNSTO (远程访问)
+/etc/config/ddnsto
+
 # ==================== iStore 相关 ====================
 /etc/istore/
 /usr/lib/opkg/istore/
