@@ -15,14 +15,15 @@ start_service() {
 }
 
 stop_service() {
-    # 系统停止时备份 iStore 软件列表
+    # 系统停止时备份已安装的软件包列表
     local backup_dir="/etc/istore"
     local backup_file="$backup_dir/installed_packages.txt"
     
     mkdir -p "$backup_dir"
     
-    if [ -x /bin/is-opkg ]; then
-        /bin/is-opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
-        logger -t istore-backup "系统停止前已备份 iStore 软件列表 ($(wc -l < "$backup_file") 个包)"
+    # 备份所有已安装的包名（opkg list-installed 格式：包名 - 版本）
+    if command -v opkg >/dev/null 2>&1; then
+        opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
+        logger -t istore-backup "系统停止前已备份软件包列表 ($(wc -l < "$backup_file") 个包)"
     fi
 }

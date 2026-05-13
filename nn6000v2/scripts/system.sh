@@ -112,14 +112,17 @@ boot() {
 
     crontab /etc/crontabs/root
 
-    # 恢复 iStore 软件（如果存在备份列表）
-    local istore_list="/etc/istore/installed_packages.txt"
-    if [ -f "$istore_list" ] && [ -x /bin/is-opkg ]; then
-        logger -t custom_task "检测到 iStore 软件备份列表，开始恢复..."
+    # 恢复软件包（如果存在备份列表）
+    local pkg_list="/etc/istore/installed_packages.txt"
+    if [ -f "$pkg_list" ]; then
+        logger -t custom_task "检测到软件包备份列表，开始恢复..."
         while read -r pkg; do
-            [ -n "$pkg" ] && /bin/is-opkg install "$pkg" 2>/dev/null &
-        done < "$istore_list"
-        logger -t custom_task "iStore 软件恢复任务已提交到后台"
+            # 跳过空行，检查包是否已安装
+            if [ -n "$pkg" ] && ! opkg status "$pkg" 2>/dev/null | grep -q "Status:"; then
+                opkg install "$pkg" 2>/dev/null &
+            fi
+        done < "$pkg_list"
+        logger -t custom_task "软件包恢复任务已提交到后台"
     fi
 }
 EOF
