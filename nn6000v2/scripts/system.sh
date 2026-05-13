@@ -248,6 +248,9 @@ add_backup_info_to_sysupgrade() {
 # ==================== iStore 相关 ====================
 /etc/istore/
 /usr/lib/opkg/istore/
+/usr/lib/opkg/status
+/usr/lib/opkg/info/
+/usr/lib/opkg/lists/
 
 # ==================== 系统配置 ====================
 /etc/config/
