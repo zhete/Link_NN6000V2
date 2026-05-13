@@ -303,18 +303,6 @@ clone_quickfile() {
     rm -rf "$TEMP_DIR"
 }
 
-clone_ddnsto() {
-    local DDNSTO_DIR="$OPENWRT_PACKAGES_DIR/luci-app-ddnsto"
-    local TEMP_DIR="$OPENWRT_PACKAGES_DIR/ddnsto-temp"
-
-    clone_packages "luci-app-ddnsto" \
-        "${GITHUB_BASE}linkease/ddnsto-openwrt.git" \
-        "$TEMP_DIR" \
-        "" \
-        "" \
-        "rm -rf \"$DDNSTO_DIR\" 2>/dev/null || true; cp -r \"$TEMP_DIR\"/* \"$OPENWRT_PACKAGES_DIR/\" 2>/dev/null || true; rm -rf \"$TEMP_DIR\""
-}
-
 remove_attendedsysupgrade() {
     find "$BUILD_DIR/feeds/luci/collections" -name "Makefile" | while read -r makefile; do
         if grep -q "luci-app-attendedsysupgrade" "$makefile"; then
