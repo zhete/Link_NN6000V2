@@ -12,8 +12,8 @@ backup_istore_packages() {
     mkdir -p "$backup_dir"
     
     # 获取已安装的 iStore 软件列表
-    if [ -x /usr/bin/is-opkg ]; then
-        /usr/bin/is-opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
+    if [ -x /bin/is-opkg ]; then
+        /bin/is-opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
         logger -t istore_backup "已备份 iStore 软件列表到 $backup_file"
     fi
 }

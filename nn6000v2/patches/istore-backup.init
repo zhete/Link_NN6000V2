@@ -21,8 +21,8 @@ stop_service() {
     
     mkdir -p "$backup_dir"
     
-    if [ -x /usr/bin/is-opkg ]; then
-        /usr/bin/is-opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
+    if [ -x /bin/is-opkg ]; then
+        /bin/is-opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
         logger -t istore-backup "系统停止前已备份 iStore 软件列表 ($(wc -l < "$backup_file") 个包)"
     fi
 }

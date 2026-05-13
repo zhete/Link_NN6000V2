@@ -114,10 +114,10 @@ boot() {
 
     # 恢复 iStore 软件（如果存在备份列表）
     local istore_list="/etc/istore/installed_packages.txt"
-    if [ -f "$istore_list" ] && [ -x /usr/bin/is-opkg ]; then
+    if [ -f "$istore_list" ] && [ -x /bin/is-opkg ]; then
         logger -t custom_task "检测到 iStore 软件备份列表，开始恢复..."
         while read -r pkg; do
-            [ -n "$pkg" ] && /usr/bin/is-opkg install "$pkg" 2>/dev/null &
+            [ -n "$pkg" ] && /bin/is-opkg install "$pkg" 2>/dev/null &
         done < "$istore_list"
         logger -t custom_task "iStore 软件恢复任务已提交到后台"
     fi
