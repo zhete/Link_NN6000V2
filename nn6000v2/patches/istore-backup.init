@@ -10,20 +10,64 @@ STOP=10
 USE_PROCD=1
 
 start_service() {
-    # 启动时不做特殊操作
+    # 启动时检查是否有备份文件需要恢复
+    local backup_file="/etc/istore/backup.tar.gz"
+    local app_list="/etc/istore/app.list"
+    
+    # 如果存在本地备份文件且系统刚启动，执行恢复
+    if [ -f "$backup_file" ] && [ -x /usr/libexec/istore/backup ]; then
+        # 检查是否已经恢复过（通过标记文件）
+        if [ ! -f /tmp/.istore_restored ]; then
+            logger -t istore-backup "检测到备份文件，开始恢复..."
+            /usr/libexec/istore/backup local_restore "$backup_file" 2>/dev/null
+            touch /tmp/.istore_restored
+            logger -t istore-backup "恢复完成"
+        fi
+    fi
+    
+    # 如果存在轻量备份列表，恢复包
+    if [ -f "$app_list" ] && [ -x /usr/libexec/istore/backup ]; then
+        if [ ! -f /tmp/.istore_light_restored ]; then
+            logger -t istore-backup "检测到轻量备份列表，开始恢复..."
+            /usr/libexec/istore/backup light_restore "$app_list" 2>/dev/null
+            touch /tmp/.istore_light_restored
+            logger -t istore-backup "轻量恢复完成"
+        fi
+    fi
+    
     return 0
 }
 
 stop_service() {
-    # 系统停止时备份已安装的软件包列表
+    # 系统停止时自动备份
     local backup_dir="/etc/istore"
-    local backup_file="$backup_dir/installed_packages.txt"
+    local backup_file="$backup_dir/backup.tar.gz"
+    local app_list="$backup_dir/app.list"
     
     mkdir -p "$backup_dir"
     
-    # 备份所有已安装的包名（opkg list-installed 格式：包名 - 版本）
-    if command -v opkg >/dev/null 2>&1; then
-        opkg list-installed 2>/dev/null | awk '{print $1}' > "$backup_file"
-        logger -t istore-backup "系统停止前已备份软件包列表 ($(wc -l < "$backup_file") 个包)"
+    # 优先使用 iStore 内置备份功能
+    if [ -x /usr/libexec/istore/backup ]; then
+        logger -t istore-backup "使用 iStore 内置备份功能..."
+        
+        # 执行轻量备份（包列表）
+        /usr/libexec/istore/backup light_backup 2>/dev/null
+        
+        # 如果有外部存储，执行本地备份
+        local external_path=$(uci -q get istore.@istore[0].local_backup_path 2>/dev/null)
+        if [ -n "$external_path" ] && [ -d "$external_path" ]; then
+            /usr/libexec/istore/backup local_backup "$external_path" 2>/dev/null
+            logger -t istore-backup "已备份到外部存储: $external_path"
+        else
+            # 没有外部存储，备份到 /etc/istore
+            /usr/libexec/istore/backup local_backup "$backup_dir" 2>/dev/null
+            logger -t istore-backup "已备份到本地存储"
+        fi
+    else
+        # 回退：使用 opkg 备份包列表
+        if command -v opkg >/dev/null 2>&1; then
+            opkg list-installed 2>/dev/null | awk '{print $1}' > "$app_list"
+            logger -t istore-backup "已备份软件包列表到 $app_list ($(wc -l < "$app_list") 个包)"
+        fi
     fi
 }
